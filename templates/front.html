@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <label for="sort"> Sort by :</label>
+    <form id="formsort" method="get">
+        <select id="sort" name="sort" onchange="this.form.submit()">
+            <option value="asc" selected="selected"><button type="submit" name="sort" >Ascending</button></option>
+            {% if sort == "desc" %}
+            <option value="desc" selected="selected"><button type="submit" name="sort" >Descending</button></option>
+            {% else %}
+            <option value="desc"><button type="submit" name="sort" >Descending</button></option>
+            {% endif %}
+
+        </select>
+    </form>
+
+
+    {% for p in posts %}
+        {{ p.render() | safe}}
+        <br><br>
+    {% endfor %}
+
+{% endblock %}

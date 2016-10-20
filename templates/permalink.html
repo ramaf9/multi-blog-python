@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {{ post.render() | safe }}
+    {% if user.name == post.user.name %}
+        <a href="newpost?id={{ post.key().id() }}&action=edit_blog"> Edit </a>
+        <a href="newpost?id={{ post.key().id() }}&action=delete_blog"> Delete </a>
+    {% else %}
+    <form class="" method="post">
+        {% if user.name %}
+            <input type="hidden" name="action" value="post_like">
+            {% if not likes %}
+            <input type="submit" name="like" value="like">
+            {% else %}
+            <input type="submit" name="like" value="unlike">
+            {% endif %}
+        {% endif %}    
+    </form>
+    {% endif %}
+    <p href=""> {{ post.post_likes.count() }} likes </p>
+    <div class="comments">
+        {% if user.name %}
+        <form action="/commentblog/{{ post.key().id() }}?action=post_comment" class="" method="post">
+            <textarea name="comment" rows="8" cols="40"></textarea>
+            <input type="submit" name="action" value="post comment">
+        </form>
+        {% endif %}
+    </div>
+    {% for p in post.post_comments %}
+        <div class="">
+            {% if c_id == p.key().id() %}
+            <form action="/commentblog/{{ post.key().id() }}?action=edit_comment&comment_id={{p.key().id()}}" method="post">
+                <textarea name="comment" rows="8" cols="40">{{ p.comment }}</textarea>
+                <button type="submit" name="button">submit</button>
+            </form>
+            {% else %}
+            <p>
+                {{ p.comment }}
+            </p>
+            {% endif %}
+            {% if p.user.name == user.name %}
+                <a href="?id={{ p.key().id() }}"> edit </a>
+            {% endif %}
+            <p>
+                - {{ p.user.name }}
+            </p>
+
+        </div><br>
+    {% endfor %}
+
+{% endblock %}

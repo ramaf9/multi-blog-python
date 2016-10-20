@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content%}
+{% if subject %}
+<h4>Edit post</h4>
+{% else %}
+<h4>New post</h4>
+{% endif %}
+<form class="" method="post">
+    <label for="subject"> subject <br>
+    <input type="text" name="subject" value="{{ subject }}">
+    </label>
+    <br>
+    <label for="content"> content <br>
+    <textarea name="content" rows="8" cols="40">{{ content }}</textarea>
+    </label>
+    <br>
+    {% if action %}
+    <button type="submit" name="action" value="edit_blog">submit</button>
+    {% else %}
+    <button type="submit" name="action" value="">submit</button>
+    {% endif %}
+    {{error}}
+</form>
+{% endblock %}

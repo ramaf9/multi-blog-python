@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Udacity</title>
+    </head>
+    <body>
+        <h2><a href="/"> MyBlog </a></h2>
+        {% if not user %}
+        <h4><a href="login">Login</a></h4>
+        {% else %}
+        <h4><a href="logout">Logout</a></h4>
+        <h4><a href="newpost">New Post</a></h4>
+        {% endif %}
+
+        <div class="content">
+            {% block content%}
+            {% endblock %}
+        </div>
+    </body>
+</html>
