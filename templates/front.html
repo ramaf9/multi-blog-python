@@ -1,19 +1,27 @@
 {% extends "base.html" %}
+{% block header %}
+<h1>Share your moments !</h1>
+<hr class="small">
+<span class="subheading">When i was a child my social network called <strong>outside</strong></span>
+{% endblock %}
 
 {% block content %}
-    <label for="sort"> Sort by :</label>
+
     <form id="formsort" method="get">
-        <select id="sort" name="sort" onchange="this.form.submit()">
-            <option value="asc" selected="selected"><button type="submit" name="sort" >Ascending</button></option>
-            {% if sort == "desc" %}
-            <option value="desc" selected="selected"><button type="submit" name="sort" >Descending</button></option>
-            {% else %}
-            <option value="desc"><button type="submit" name="sort" >Descending</button></option>
-            {% endif %}
-
-        </select>
+        <div class="form-group row">
+            <div class="col-md-3">
+              <label for="sel1">Sort by:</label>
+              <select class="form-control" onchange="this.form.submit()" id="sel1">
+                  <option value="asc" selected="selected"><button type="submit" name="sort" >Ascending</button></option>
+                  {% if sort == "desc" %}
+                  <option value="desc" selected="selected"><button type="submit" name="sort" >Descending</button></option>
+                  {% else %}
+                  <option value="desc"><button type="submit" name="sort" >Descending</button></option>
+                  {% endif %}
+              </select>
+             </div>
+        </div>
     </form>
-
 
     {% for p in posts %}
         {{ p.render() | safe}}

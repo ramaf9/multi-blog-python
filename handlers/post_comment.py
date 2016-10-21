@@ -18,8 +18,8 @@ class PostCommentBlog(Handler):
     """
     def __init__(self, *args, **kwargs):
         super(PostCommentBlog, self).__init__(*args, **kwargs)
-        if not self.user.name:
-            redirect('error_401')
+        if not self.user:
+            self.redirect('/error_401')
 
     def post(self,blog_id):
         comment = self.request.get('comment')
@@ -42,16 +42,17 @@ class DeleteCommentBlog(Handler):
     """
     def __init__(self, *args, **kwargs):
         super(DeleteCommentBlog, self).__init__(*args, **kwargs)
-        if not self.user.name:
-            redirect('error_401')
+        if not self.user:
+            self.redirect('/error_401')
 
     def get(self,comment_id):
-        p = models.PostComments.by_id(comment_id)
+        key = db.Key.from_path('PostComments', int(comment_id), parent=blog_key())
+        p = db.get(key)
         # if it is user's post
         if p.user.name == self.user.name:
             # delete user's post
             p.delete()
-            self.redirect('/')
+            self.redirect('/%s' % p.post.key().id())
         else:
             # show error
             self.redirect('error_401')
@@ -65,12 +66,12 @@ class EditCommentBlog(Handler):
     """
     def __init__(self, *args, **kwargs):
         super(EditCommentBlog, self).__init__(*args, **kwargs)
-        if not self.user.name:
-            redirect('error_401')
+        if not self.user:
+            self.redirect('/error_401')
 
     def post(self,comment_id):
         comment = self.request.get('comment')
-        key = db.Key.from_path('models.PostComments', int(comment_id), parent=blog_key())
+        key = db.Key.from_path('PostComments', int(comment_id), parent=blog_key())
         p = db.get(key)
         # check user's action new comment or edit comment
         if comment :

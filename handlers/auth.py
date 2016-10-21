@@ -105,8 +105,8 @@ class Logout(Handler):
     """
     def __init__(self, *args, **kwargs):
         super(Logout, self).__init__(*args, **kwargs)
-        if not self.user.name:
-            redirect('error_401')
+        if not self.user:
+            self.redirect('/error_401')
 
     def get(self):
         # call parent function to logout

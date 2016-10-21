@@ -40,7 +40,7 @@ class GetBlog(Handler):
         # get all post_likes value
         for p in post.post_likes:
             # if users already like
-            if self.user.name == p.user.name:
+            if self.user and self.user.name == p.user.name:
                 like=True
                 break
 
@@ -49,6 +49,7 @@ class GetBlog(Handler):
             # 404 page not found
             self.error(404)
             return
+
         c_id = self.request.get('c_id')
         # if users wants to edit
         if c_id:
@@ -69,8 +70,8 @@ class PostBlog(Handler):
     """
     def __init__(self, *args, **kwargs):
         super(PostBlog, self).__init__(*args, **kwargs)
-        if not self.user.name:
-            redirect('error_401')
+        if not self.user:
+            self.redirect('/error_401')
 
     def get(self):
         # show new post
@@ -103,8 +104,8 @@ class EditBlog(Handler):
     """
     def __init__(self, *args, **kwargs):
         super(EditBlog, self).__init__(*args, **kwargs)
-        if not self.user.name:
-            redirect('error_401')
+        if not self.user:
+            self.redirect('/error_401')
 
     def get(self,blog_id):
         key = db.Key.from_path('Post', int(blog_id), parent=blog_key())
@@ -145,8 +146,8 @@ class DeleteBlog(Handler):
     """
     def __init__(self, *args, **kwargs):
         super(DeleteBlog, self).__init__(*args, **kwargs)
-        if not self.user.name:
-            redirect('error_401')
+        if not self.user:
+            self.redirect('/error_401')
 
     def get(self,blog_id):
         # get post from db
@@ -156,7 +157,7 @@ class DeleteBlog(Handler):
         if post.user.name == self.user.name:
             # delete current post
             delete = post.delete()
-            self.redirect('success')
+            self.redirect('/success')
         else:
             # show error
             self.redirect('error_401')

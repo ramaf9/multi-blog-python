@@ -18,8 +18,8 @@ class BlogLike(Handler):
     """
     def __init__(self, *args, **kwargs):
         super(BlogLike, self).__init__(*args, **kwargs)
-        if not self.user.name:
-            redirect('error_401')
+        if not self.user:
+            self.redirect('/error_401')
 
     def get(self,blog_id):
         # get blog with id = blog_id in url segment

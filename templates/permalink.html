@@ -1,50 +1,110 @@
 {% extends "base.html" %}
+{% block header %}
+<h1>{{ post.subject }}</h1>
+<hr class="small">
+<span class="subheading">a hearing words by <br><b>{{ post.user.name }}<b></span>
+{% endblock %}
 
 {% block content %}
-    {{ post.render() | safe }}
+    <!-- {{ post.render() | safe }} -->
+    <div class="post-preview">
+        <p class="post-subtitle">
+            {{ post._render_text }}
+        </p>
+        <p class="post-meta">Posted by <a href="#"> {{ post.user.name }}</a> on
+            {{ post.created.strftime("%b %d, %y") }}</p>
+    </div>
+
     {% if user.name == post.user.name %}
-        <a href="editpost/{{ post.key().id() }}"> Edit </a>
-        <a href="deletepost/{{ post.key().id() }}"> Delete </a>
+        <a href="editpost/{{ post.key().id() }}">
+            <span class="fa-stack fa-lg">
+                <i class="fa fa-pencil-square-o fa-stack-1x"></i>
+            </span>
+        </a>
+        <a href="deletepost/{{ post.key().id() }}">
+            <span class="fa-stack fa-lg">
+                <i class="fa fa-times fa-stack-1x"></i>
+            </span>
+        </a>
     {% else %}
         {% if user.name %}
             {% if not likes %}
-            <a href="like/{{ post.key().id() }}"> Like </a>
+            <a href="like/{{ post.key().id() }}">
+                <span class="fa-stack fa-lg">
+                    <i class="fa fa-heart-o fa-stack-1x"></i>
+                </span>
+            </a>
             {% else %}
-            <a href="like/{{ post.key().id() }}"> Unlike </a>
+            <a href="like/{{ post.key().id() }}">
+                <span class="fa-stack fa-lg">
+                    <i class="fa fa-heart fa-stack-1x"></i>
+                </span>
+            </a>
             {% endif %}
         {% endif %}
     {% endif %}
     <p href=""> {{ post.post_likes.count() }} likes </p>
-    <div class="comments">
+    <div class="row">
         {% if user.name %}
         <form action="/newcomment/{{ post.key().id() }}" class="" method="post">
-            <textarea name="comment" rows="8" cols="40"></textarea>
-            <input type="submit" name="action" value="post comment">
+            <textarea class="form-control" name="comment" rows="8" cols="40"></textarea>
+            <br>
+            <input class="btn btn-default" type="submit" name="action" value="post comment">
         </form>
         {% endif %}
     </div>
+    <br><br>
     {% for p in post.post_comments %}
-        <div class="">
+        <div class="row">
+            <div class="col-md-2">
+                <p>
+                    <div class="col-md-12">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </div>
+                    <div class="col-md-12">
+                        {{ p.user.name }}
+                    </div>
+                </p>
+            </div>
+            <div class="col-md-10">
+                {% if c_id == p.key().id() %}
+                <form action="/editcomment/{{p.key().id()}}" method="post">
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                          <!-- <label for="sel1">Edit</label> -->
+                              <textarea class="form-control" id="sel1" name="comment" rows="8" cols="40">{{ p.comment }}</textarea>
+                              <br>
+                              <div class="pull-right">
+                                  <a href="/{{ p.post.key().id() }}">Cancel</a>
+                                  <button class="btn btn-default" type="submit" name="button">submit</button>
+                              </div>
+                         </div>
+                    </div>
 
-            {% if c_id == p.key().id() %}
-            <form action="/editcomment/{{p.key().id()}}" method="post">
-                <textarea name="comment" rows="8" cols="40">{{ p.comment }}</textarea>
-                <a href="/{{ p.post.key().id() }}">Cancel</a>
-                <button type="submit" name="button">submit</button>
-            </form>
-            {% else %}
-            <p>
-                {{ p.comment }}
-            </p>
-            {% endif %}
-            {% if p.user.name == user.name %}
-                <a href="?c_id={{ p.key().id() }}"> edit </a>
-            {% endif %}
-            <p>
-                - {{ p.user.name }}
-            </p>
-
-        </div><br>
+                </form>
+                {% else %}
+                <p >
+                    <small style="font-weight:300;">{{ p.comment }}</small>
+                </p>
+                {% endif %}
+                {% if p.user.name == user.name and not c_id %}
+                    <a href="?c_id={{ p.key().id() }}">
+                        <span class="fa-stack fa-sm">
+                            <i class="fa fa-pencil-square-o fa-stack-1x"></i>
+                        </span>
+                    </a>
+                    <a href="deletecomment/{{ p.key().id() }}">
+                        <span class="fa-stack fa-sm">
+                            <i class="fa fa-times fa-stack-1x"></i>
+                        </span>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        <legend></legend>
     {% endfor %}
 
 {% endblock %}

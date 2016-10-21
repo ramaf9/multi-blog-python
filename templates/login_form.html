@@ -1,33 +1,42 @@
 {% extends "base.html" %}
 
 {% block content%}
-<form class="" method="post">
-    <table>
-        <tr>
-            <td class="label">
-                Username
-            </td>
-            <td>
-                <input type="text" name="username" value="{{username}}">
-            </td>
-            <td class="error">
-                {{error_username}}
-            </td>
-        </tr>
+<div class="row">
+    <form class="form-group col-md-6" method="post">
+        <table>
+            <tr>
+                <td style="padding-right:8px;">
+                    Username
+                </td>
+                <td>
+                    <input class="form-control" type="text" name="username" value="{{username}}">
+                </td>
+                <td class="error">
+                    {{error_username}}
+                </td>
+            </tr>
 
-        <tr>
-            <td class="label">
-                Password
-            </td>
-            <td>
-                <input type="password" name="password" value="">
-            </td>
-            <td class="error">
-                {{error}}
-            </td>
-        </tr>
-    </table>
-    <input type="submit" name="name" value="add">
-</form>
-<a href="/signup">Sign up</a>
+            <tr>
+                <td style="padding-right:8px;">
+                    Password
+                </td>
+                <td>
+                    <input class="form-control" type="password" name="password" value="">
+                </td>
+                <td class="error">
+                    {{error}}
+                </td>
+            </tr>
+        </table>
+        <br>
+        <input class="btn btn-default" type="submit" name="name" value="Sign in">
+    </form>
+</div>
+
+<div class="col-md-5">
+
+    <small><a href="/signup">Sign up</a></small>
+
+</div>
+
 {% endblock %}

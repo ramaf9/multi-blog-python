@@ -1,12 +1,12 @@
-<div class="post">
-    <div class="post-heading">
+<div class="post-preview">
+    <h2 class="post-title">
         <a href="{{ p.key().id() }}">{{ p.subject }}</a>
-    </div>
-    <div class="post-date">
-        {{ p.created.strftime("%b %d, %y") }}
-    </div>
-    <div class="post-content">
-        {{ p._render_text | safe }}
-    </div>
+    </h2>
 
+    <p class="post-subtitle">
+        {{ p._render_text | safe }}
+    </p>
+    <p class="post-meta">Posted by <a href="#"> {{ p.user.name }}</a> on
+        {{ p.created.strftime("%b %d, %y") }}</p>
 </div>
+<legend></legend>
