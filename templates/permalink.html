@@ -3,24 +3,21 @@
 {% block content %}
     {{ post.render() | safe }}
     {% if user.name == post.user.name %}
-        <a href="newpost?id={{ post.key().id() }}&action=edit_blog"> Edit </a>
-        <a href="newpost?id={{ post.key().id() }}&action=delete_blog"> Delete </a>
+        <a href="editpost/{{ post.key().id() }}"> Edit </a>
+        <a href="deletepost/{{ post.key().id() }}"> Delete </a>
     {% else %}
-    <form class="" method="post">
         {% if user.name %}
-            <input type="hidden" name="action" value="post_like">
             {% if not likes %}
-            <input type="submit" name="like" value="like">
+            <a href="like/{{ post.key().id() }}"> Like </a>
             {% else %}
-            <input type="submit" name="like" value="unlike">
+            <a href="like/{{ post.key().id() }}"> Unlike </a>
             {% endif %}
-        {% endif %}    
-    </form>
+        {% endif %}
     {% endif %}
     <p href=""> {{ post.post_likes.count() }} likes </p>
     <div class="comments">
         {% if user.name %}
-        <form action="/commentblog/{{ post.key().id() }}?action=post_comment" class="" method="post">
+        <form action="/newcomment/{{ post.key().id() }}" class="" method="post">
             <textarea name="comment" rows="8" cols="40"></textarea>
             <input type="submit" name="action" value="post comment">
         </form>
@@ -28,9 +25,11 @@
     </div>
     {% for p in post.post_comments %}
         <div class="">
+
             {% if c_id == p.key().id() %}
-            <form action="/commentblog/{{ post.key().id() }}?action=edit_comment&comment_id={{p.key().id()}}" method="post">
+            <form action="/editcomment/{{p.key().id()}}" method="post">
                 <textarea name="comment" rows="8" cols="40">{{ p.comment }}</textarea>
+                <a href="/{{ p.post.key().id() }}">Cancel</a>
                 <button type="submit" name="button">submit</button>
             </form>
             {% else %}
@@ -39,7 +38,7 @@
             </p>
             {% endif %}
             {% if p.user.name == user.name %}
-                <a href="?id={{ p.key().id() }}"> edit </a>
+                <a href="?c_id={{ p.key().id() }}"> edit </a>
             {% endif %}
             <p>
                 - {{ p.user.name }}
