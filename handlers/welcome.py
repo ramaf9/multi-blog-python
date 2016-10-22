@@ -1,16 +1,13 @@
-from handler import Handler
+from auth_handler import AuthHandler
 import models
 
-class Welcome(Handler):
+
+class Welcome(AuthHandler):
     """
         class for handle user's greeting
         function :
             get()
     """
-    def __init__(self, *args, **kwargs):
-        super(Welcome, self).__init__(*args, **kwargs)
-        if not self.user:
-            self.redirect('/error_401')
 
     def get(self):
         username = self.user.name

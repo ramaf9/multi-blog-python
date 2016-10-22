@@ -4,11 +4,11 @@
 <h4>Edit post</h4>
 <form method="post">
     <label for="subject"> subject <br>
-    <input style="font-weight:200" type="text" name="subject" value="{{ subject }}">
+    <input style="font-weight:200" type="text" name="subject" value="{{ post.subject }}">
     </label>
     <br>
     <label for="content"> content <br>
-    <textarea style="font-weight:200" name="content" rows="8" cols="40">{{ content }}</textarea>
+    <textarea style="font-weight:200" name="content" rows="8" cols="40">{{ post.content }}</textarea>
     </label>
     <br>
     {% if error %}
@@ -16,6 +16,7 @@
       <strong>Warning!</strong> {{error}}
     </div>
     {% endif %}
+    <a class="btn" href="/{{ post.key().id() }}">cancel</a>
     <button class="btn btn-default" type="submit" name="action" value="edit_blog">submit</button>
 
 

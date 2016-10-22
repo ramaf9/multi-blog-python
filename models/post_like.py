@@ -2,6 +2,7 @@ from google.appengine.ext import db
 from user import User
 from post import Post
 
+
 class PostLikes(db.Model):
     """
         class for posting like data to datastore

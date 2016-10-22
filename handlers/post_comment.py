@@ -1,52 +1,49 @@
 import models
-from handler import Handler
+from auth_handler import AuthHandler
 from google.appengine.ext import db
 
-################ START OF GLOBAL ####################################################
+# START GLOBAL
+
 
 def blog_key(name="default"):
-    return db.Key.from_path('blogs',name)
+    return db.Key.from_path('blogs', name)
 
-################ HANDLER CLASS #######################################################
+# START HANDLER CLASS
 
-class PostCommentBlog(Handler):
+
+class PostCommentBlog(AuthHandler):
     """
         class for handling new user's
         comment on post
         function :
             post()
     """
-    def __init__(self, *args, **kwargs):
-        super(PostCommentBlog, self).__init__(*args, **kwargs)
-        if not self.user:
-            self.redirect('/error_401')
 
-    def post(self,blog_id):
+    def post(self, blog_id):
         comment = self.request.get('comment')
         # check user's action new comment or edit comment
         key = db.Key.from_path('Post', int(blog_id), parent=blog_key())
         post = db.get(key)
         # insert new post comment to db
-        p = models.PostComments(parent=blog_key(), post=post, user = self.user, comment = comment)
+        p = models.PostComments(
+            parent=blog_key(), post=post, user=self.user, comment=comment)
         p.put()
 
         # return to specified post where id = blog_id
         self.redirect('/%s' % str(blog_id))
 
-class DeleteCommentBlog(Handler):
+
+class DeleteCommentBlog(AuthHandler):
     """
         class for handle deleting user's
         comment on blog
         function :
             get()
     """
-    def __init__(self, *args, **kwargs):
-        super(DeleteCommentBlog, self).__init__(*args, **kwargs)
-        if not self.user:
-            self.redirect('/error_401')
 
-    def get(self,comment_id):
-        key = db.Key.from_path('PostComments', int(comment_id), parent=blog_key())
+    def get(self, comment_id):
+        key = db.Key.from_path('PostComments', int(
+            comment_id), parent=blog_key())
         p = db.get(key)
         # if it is user's post
         if p.user.name == self.user.name:
@@ -57,24 +54,22 @@ class DeleteCommentBlog(Handler):
             # show error
             self.redirect('error_401')
 
-class EditCommentBlog(Handler):
+
+class EditCommentBlog(AuthHandler):
     """
         class for handle edit user's
         comment on blog
         function :
             post()
     """
-    def __init__(self, *args, **kwargs):
-        super(EditCommentBlog, self).__init__(*args, **kwargs)
-        if not self.user:
-            self.redirect('/error_401')
 
-    def post(self,comment_id):
+    def post(self, comment_id):
         comment = self.request.get('comment')
-        key = db.Key.from_path('PostComments', int(comment_id), parent=blog_key())
+        key = db.Key.from_path('PostComments', int(
+            comment_id), parent=blog_key())
         p = db.get(key)
         # check user's action new comment or edit comment
-        if comment :
+        if comment:
             # if it is user's post
             if p.user.name == self.user.name:
                 # update user post

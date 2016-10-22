@@ -1,13 +1,16 @@
 import models
 from handler import Handler
+from auth_handler import AuthHandler
 from google.appengine.ext import db
 
-################ START OF GLOBAL ####################################################
+# START GLOBAL
+
 
 def blog_key(name="default"):
-    return db.Key.from_path('blogs',name)
+    return db.Key.from_path('blogs', name)
 
-################ HANDLER CLASS #######################################################
+# START HANDLER CLASS
+
 
 class ListBlog(Handler):
     """
@@ -16,14 +19,17 @@ class ListBlog(Handler):
         function :
             get()
     """
+
     def get(self):
         # get request from key sort
         sort = self.request.get('sort')
         if not sort:
             sort = "desc"
         # retrieve anything from post table with sql query like
-        posts = db.GqlQuery("select * from Post order by created %s limit 10" %sort)
-        self.render("front.html", posts = posts,sort = sort)
+        posts = db.GqlQuery(
+            "select * from Post order by created %s limit 10" % sort)
+        self.render("front.html", posts=posts, sort=sort)
+
 
 class GetBlog(Handler):
     """
@@ -32,7 +38,8 @@ class GetBlog(Handler):
         function :
             get()
     """
-    def get(self,blog_id):
+
+    def get(self, blog_id):
         # get post with id = blog_id in url segment
         key = db.Key.from_path('Post', int(blog_id), parent=blog_key())
         post = db.get(key)
@@ -41,7 +48,7 @@ class GetBlog(Handler):
         for p in post.post_likes:
             # if users already like
             if self.user and self.user.name == p.user.name:
-                like=True
+                like = True
                 break
 
         # if post not exist with current key
@@ -53,25 +60,23 @@ class GetBlog(Handler):
         c_id = self.request.get('c_id')
         # if users wants to edit
         if c_id:
-            key = db.Key.from_path('PostComments', int(c_id), parent=blog_key())
+            key = db.Key.from_path(
+                'PostComments', int(c_id), parent=blog_key())
             c_id = db.get(key)
             if c_id.user.name == self.user.name:
                 c_id = c_id.key().id()
 
         # show permalink html
-        self.render("permalink.html", post = post, likes = like , c_id = c_id)
+        self.render("permalink.html", post=post, likes=like, c_id=c_id)
 
-class PostBlog(Handler):
+
+class PostBlog(AuthHandler):
     """
         class for handling new post and edit post
         function :
             get()
             post()
     """
-    def __init__(self, *args, **kwargs):
-        super(PostBlog, self).__init__(*args, **kwargs)
-        if not self.user:
-            self.redirect('/error_401')
 
     def get(self):
         # show new post
@@ -85,7 +90,11 @@ class PostBlog(Handler):
         # check if its have value
         if subject and content:
             # inserting new post
-            post = models.Post(parent=blog_key(), user=self.user, subject = subject, content = content)
+            post = models.Post(
+                parent=blog_key(),
+                user=self.user,
+                subject=subject,
+                content=content)
             post.put()
             # redirect to recent post blog
             self.redirect('/%s' % str(post.key().id()))
@@ -93,34 +102,33 @@ class PostBlog(Handler):
             # set error message
             error = "subject and content, please"
             # show newpost html with params
-            self.render("newpost.html", subject=subject, content=content, error=error)
+            self.render("newpost.html", subject=subject,
+                        content=content, error=error)
 
-class EditBlog(Handler):
+
+class EditBlog(AuthHandler):
     """
         class for handle user's blog edit
         function :
             get()
             post()
     """
-    def __init__(self, *args, **kwargs):
-        super(EditBlog, self).__init__(*args, **kwargs)
-        if not self.user:
-            self.redirect('/error_401')
 
-    def get(self,blog_id):
+    def get(self, blog_id):
         key = db.Key.from_path('Post', int(blog_id), parent=blog_key())
         post = db.get(key)
-        self.render("editpost.html", subject=post.subject, content=post.content)
+        self.render("editpost.html", post=post)
 
-    def post(self,blog_id):
+    def post(self, blog_id):
         # retrieve request from post
         subject = self.request.get('subject')
         content = self.request.get('content')
 
+        key = db.Key.from_path('Post', int(blog_id), parent=blog_key())
+        post = db.get(key)
+
         # check if its have value
         if subject and content:
-            key = db.Key.from_path('Post', int(blog_id), parent=blog_key())
-            post = db.get(key)
             # check if user's post
             if self.user.name == post.user.name:
                 # update post
@@ -136,7 +144,9 @@ class EditBlog(Handler):
             # set error message
             error = "subject and content, please"
             # show newpost html with params
-            self.render("editpost.html", subject=subject, content=content, error=error)
+
+            self.render("editpost.html", post=post, error=error)
+
 
 class DeleteBlog(Handler):
     """
@@ -144,12 +154,8 @@ class DeleteBlog(Handler):
         function :
             get()
     """
-    def __init__(self, *args, **kwargs):
-        super(DeleteBlog, self).__init__(*args, **kwargs)
-        if not self.user:
-            self.redirect('/error_401')
 
-    def get(self,blog_id):
+    def get(self, blog_id):
         # get post from db
         key = db.Key.from_path('Post', int(blog_id), parent=blog_key())
         post = db.get(key)
